@@ -1,23 +1,33 @@
-'use client';
-import { Button } from "@mui/material";
-import Image from "next/image";
-import { useState } from "react";
+// app/page.tsx
+import type { Metadata } from 'next';
+import HomeClient from '../components/HomeClient'; // client component — fine to import
+// server fetch is fine here
+export const metadata: Metadata = {
+  title: 'Home',
+};
 
-export default function Home() {
-  const [law, setLaw] = useState("");
-  async function fetchLaw() {
-    const baseUrl = `http://localhost:1337/api`;
-    const res = await fetch(`${baseUrl}/law-firms/`)
-    const data = await res.json();
-    setLaw(data);
-    console.log(data)
-    return data;
-  }
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Button variant="contained" onClick={() => fetchLaw()}>Fetch Law Firm</Button>
-      </main>
-    </div>
-  );
+export default async function Page() {
+  const api = process.env.NEXT_PUBLIC_STRAPI_URL;
+
+  // server-side fetch with Next caching
+  const pagesResp = await fetch(`${api}/api/pages?filters[slug][$eq]=home&populate=hero_media`, { next: { revalidate: 60 } })
+    .then(r => r.json())
+    .catch(() => null);
+  const servicesResp = await fetch(`${api}/api/services?populate=deep`, { next: { revalidate: 60 } })
+    .then(r => r.json())
+    .catch(() => null);
+  const teamResp = await fetch(`${api}/api/team-members?populate=photo`, { next: { revalidate: 60 } })
+    .then(r => r.json())
+    .catch(() => null);
+  const clientsResp = await fetch(`${api}/api/clients?populate=logo`, { next: { revalidate: 60 } })
+    .then(r => r.json())
+    .catch(() => null);
+
+  const pageData = pagesResp?.data?.[0] ?? null;
+  const services = servicesResp ?? { data: [] };
+  const team = teamResp ?? { data: [] };
+  const clients = clientsResp ?? { data: [] };
+
+  // Pass JSON to the client component
+  return <HomeClient pageData={pageData} services={services} team={team} clients={clients} />;
 }
