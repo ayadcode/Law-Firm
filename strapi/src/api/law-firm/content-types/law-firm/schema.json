@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "law_firms",
+  "info": {
+    "singularName": "law-firm",
+    "pluralName": "law-firms",
+    "displayName": "Law Firm"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "discription": {
+      "type": "string"
+    }
+  }
+}
