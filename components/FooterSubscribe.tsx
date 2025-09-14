@@ -7,7 +7,7 @@ import { useState } from 'react';
 const API = process.env.NEXT_PUBLIC_STRAPI_URL || '';
 
 export default function FooterSubscribe() {
-  const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [status, setStatus] = useState<{type:'success'|'error'; message:string} | null>(null);
 
   return (
     <div className="py-8 bg-brownDark text-white">
@@ -18,12 +18,12 @@ export default function FooterSubscribe() {
           onSubmit={async (values, { setSubmitting, resetForm }) => {
             try {
               setStatus(null);
-              // Check duplicate
-              const checkRes = await axios.get(`${API}/api/subscribers?filters[email][$eq]=${encodeURIComponent(values.email)}`);
-              if (checkRes.data.data.length > 0) {
+              // duplicate check
+              const check = await axios.get(`${API}/api/subscribers?filters[email][$eq]=${encodeURIComponent(values.email)}`);
+              if (check.data?.data?.length > 0) {
                 setStatus({ type: 'error', message: 'Email already subscribed' });
               } else {
-                await axios.post(`${API}/api/subscribers`, { data: { email: values.email } });
+                await axios.post(`${API}/api/subscribers`, { data: { email: values.email }});
                 setStatus({ type: 'success', message: 'Subscribed successfully' });
                 resetForm();
               }
@@ -47,9 +47,7 @@ export default function FooterSubscribe() {
           )}
         </Formik>
 
-        {status && (
-          <div className={`mt-3 ${status.type === 'success' ? 'text-green-300' : 'text-red-300'}`}>{status.message}</div>
-        )}
+        {status && <div className={`mt-3 ${status.type === 'success' ? 'text-green-300' : 'text-red-300'}`}>{status.message}</div>}
       </div>
     </div>
   );

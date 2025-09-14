@@ -3,9 +3,9 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 type LanguageState = { lang: "en" | "ar" };
 const initialState: LanguageState = {
   lang:
-    typeof window !== "undefined"
-      ? (localStorage.getItem("lang") as "en" | "ar") || "en"
-      : "en",
+    (typeof window !== "undefined" &&
+      (localStorage.getItem("lang") as "en" | "ar")) ||
+    "en",
 };
 
 const slice = createSlice({
